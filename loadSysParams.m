@@ -11,6 +11,7 @@ q = [220    140   346-186;
      220    140   346+550;
      220    140   346+1100;
      220    140   346+1160]; %[mm]
+q = q*0.001; %[m]
 
 % Unit Vector along each axis of rotation
 w = [0 0 1
@@ -23,23 +24,20 @@ w = [0 0 1
  
 %% Position and orientation of FT-Sensor tool-mounting surface with robot in 0 config
 %  (the other surface being attached to the end of the robot arm)
-gSensor0 = [1 0 0 220
-            0 1 0 140
-            0 0 1 q(end,end)+30
-            0 0 0 1]; %[mm]
+gSensor0 = [1 0 0 0.220
+            0 1 0 0.140
+            0 0 1 q(end,end)+0.030
+            0 0 0 1]; %[m]
 
 %% Position and orientation of Tool Surface
 toolSurfaceAngle0 = -60; %[deg]
-gToolSurface0 = [cosd(toolSurfaceAngle0)  0  sind(toolSurfaceAngle0)  6.14+220
-                 0                        1        0                  140
-                 -sind(toolSurfaceAngle0) 0  cosd(toolSurfaceAngle0)  gSensor0(3,end)+157.64
-                 0 0 0 1]; %[mm]
+gToolSurface0 = [cosd(toolSurfaceAngle0)  0  sind(toolSurfaceAngle0)  0.00614+0.220
+                 0                        1        0                  0.140
+                 -sind(toolSurfaceAngle0) 0  cosd(toolSurfaceAngle0)  gSensor0(3,end)+0.15764
+                 0 0 0 1]; %[m]
 
 %% Tool mass and position of tool CG
-gToolCG0 = [1 0 0 2.44+220
-            0 1 0 140
-            0 0 1 gSensor0(3,end)+54.75
-            0 0 0 1]; %[mm]
-        
-%% Change log
-% YYYYMMDD: <description_of_changes>
+gToolCG0 = [1 0 0 0.00244+0.220
+            0 1 0 0.140
+            0 0 1 gSensor0(3,end)+0.05475
+            0 0 0 1]; %[m]
