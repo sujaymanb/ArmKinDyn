@@ -1,6 +1,9 @@
 % Created: 20200423
 % Run this script to load system parameters into workspace
 
+%% Duh
+g = [0; 0; -9.8]; %[m/s^2]
+
 %% 7-DoF Barrett Arm (with second link mod)
 % Position of Joints in 0 config, following drawing of Barret_WAM.pdf
 % Second long link of arm has been made longer by 250mm
