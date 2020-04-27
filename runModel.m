@@ -35,19 +35,34 @@ theta0 = [30; 30; 0; 60; 0; 45; 0].*pi./180; %[radians], starting pose of robot
 theta = theta0; % track joint angles independently for plotting
 
 %% Iterate through time steps
+% Initialize animation figure
+figure()
+hold off
+xlabel('x')
+ylabel('y')
+zlabel('z')
+title('Animated Robot Arm')
+
+toolPos = [];
 
 for t = 1:size(FtoolSim,2)
     % Simulator:
     % Compute FK and simulated Fsensor
     [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+    toolPos = [toolPos gToolCG(1:3,end)];
     Fsensor = calcInvStatics(FtoolSim(:,t), gSensor, gToolCG);
     
     % Controller:
     % Compute Ftool from Fsensor and FK
     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
     % Plot arm links and tool trajectory
+    animateArm(jointPos)
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
     % Perform IK and obtain newTheta
     theta = calcIK(theta,FEstApp);
 end
+
+hold on
+plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), '--', 'b', 'LineWidth', 1.5)
+legend('Arm Links', 'Tool Path')
