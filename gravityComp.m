@@ -1,4 +1,4 @@
-function FEstApp = gravityComp(gCompBool, mTool, g, FEstA, gSensor)
+function FEstApp = gravityComp(gCompBool, mTool, g, Ftool, gSensor)
 % gCompBool: gravity compensation turned on or off
 % Ftool: 6x1 force vector
 % gSensor: 4x4 position and orientation of sensor
