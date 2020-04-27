@@ -10,28 +10,44 @@
 mode = 1;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
-% 3: External force on tool as pure translational force
-% 4: External force on tool as pure rotational torque
-% 5: General external force on tool
+% 3: External force on tool as pure translational force, gravity
+%    compensation turned off
+% 4: External force on tool as pure translational force, gravity
+%    compensation turned on
+% 5: External force on tool as pure rotational torque
+% 6: General external force on tool
 
 %% DO NOT EDIT BELOW
+run('loadSysParams.m')
 
 %% Generate Fapplied vector (inertial frame), 6xN
-Fapplied = [];
+Fapplied = genAppForce(mode);
+FtoolSim = Fapplied;
+FtoolSim(1:3,:) = FtoolSim(1:3,:) - mTool.*g; % add force due to gravity
+
+gravCompBool = false;
+if ismember(mode, [2,4,5,6])
+    gravCompBool = true;
+end
 
 %% Initialize system
-% Set starting joint angles
-% Initialize joint angles variable to plot
+theta0 = [30; 30; 0; 60; 0; 45; 0].*pi./180; %[radians], starting pose of robot
+theta = theta0; % track joint angles independently for plotting
 
 %% Iterate through time steps
 
-for t = 1:size(Fapplied,2)
+for t = 1:size(FtoolSim,2)
     % Simulator:
     % Compute FK and simulated Fsensor
+    [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+    Fsensor = calcInvStatics(FtoolSim(:,t), gSensor, gToolCG);
     
     % Controller:
     % Compute Ftool from Fsensor and FK
+    Ftool = calcStatics(Fsensor, gSensor, gToolCG);
     % Plot arm links and tool trajectory
-    % Compute FEstApp
+    % Compute FEstApp from gravity compensator based on mode
+    FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
     % Perform IK and obtain newTheta
+    theta = calcIK(theta,FEstApp);
 end
