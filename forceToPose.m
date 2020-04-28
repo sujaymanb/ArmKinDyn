@@ -18,7 +18,7 @@ function newPose = forceToPose(currPose,Fapp)
     
     pd = pc + kp * force;
     qrot = eul2rotm(kq * torque');
-    qd = qrot * qc
+    qd = qrot * qc;
     
     newPose = [qd,pd;
                0,0,0,1];
