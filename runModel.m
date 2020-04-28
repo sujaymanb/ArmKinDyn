@@ -44,7 +44,7 @@ zlabel('z')
 title('Animated Robot Arm')
 
 toolPos = [];
-
+figure()
 for t = 1:size(FtoolSim,2)
     % Simulator:
     % Compute FK and simulated Fsensor
