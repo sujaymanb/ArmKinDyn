@@ -10,7 +10,7 @@ function Fapplied = genAppForce(mode)
 % 6: General external force on tool
 % Fapplied: 6xT array of applied forces, T=10000, to be tuned
 
-T = 10000; %[ms] total time, 10 seconds
+T = 10; %[ms] total time, 10 seconds
 maxF = 5; %[N]
 maxTau = 2; %[N]
 
