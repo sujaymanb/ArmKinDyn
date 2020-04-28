@@ -17,7 +17,7 @@ mode = 1;
 % 5: External force on tool as pure rotational torque
 % 6: General external force on tool
 
-%% DO NOT EDIT BELOW
+%% !!!DO NOT EDIT BELOW!!!
 run('loadSysParams.m')
 
 %% Generate Fapplied vector (inertial frame), 6xN
@@ -59,8 +59,10 @@ for t = 1:size(FtoolSim,2)
     animateArm(jointPos)
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
+    % Obtain desired pose from FEstApp
+    desiredPose = forceToPose(gToolSurface, FEstApp);
     % Perform IK and obtain newTheta
-    theta = calcIK(theta,FEstApp);
+    theta = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
 end
 
 hold on
