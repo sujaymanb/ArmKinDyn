@@ -1,7 +1,7 @@
 %% outputs desired pose for step
 function newPose = forceToPose(currPose,Fapp)
-    pc = currPose(1:3);
-    qc = [currPose(7),currPose(4:6)'];
+    pc = currPose(1:3,4);
+    qc = currPose(1:3,1:3);
     
     force = Fapp(1:3);
     if norm(force) ~= 0
@@ -14,11 +14,12 @@ function newPose = forceToPose(currPose,Fapp)
     end
     
     kp = 0.01;
-    kq = 0.01;
+    kq = 0.1;
     
     pd = pc + kp * force;
-    qrot = eul2quat(kq * torque');
-    qd = quatmultiply(qc,qrot);
+    qrot = eul2rotm(kq * torque');
+    qd = qrot * qc
     
-    newPose = [pd;qd'];
+    newPose = [qd,pd;
+               0,0,0,1];
 end
