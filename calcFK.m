@@ -11,14 +11,14 @@ function [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,
     % fk
     g = eye(4);
     jointPos = nan(7,3);
-    for i = 1:size(theta,2)
+    for i = 1:size(theta,1)
         twist = [cross(-w(i,:)',q(i,:)');w(i,:)'];
         g = g * expTwist(twist,theta(i));
         % joint positions
         %rotx(axisR(i))
         g0 = [eye(3), q(i,:)';
             [0,0,0], 1];
-        gJoint = g0 * g
+        gJoint = g0 * g;
         jointPos(i,:) = gJoint(1:3,4)';
     end
     gSensor = g * gSensor0;
