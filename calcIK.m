@@ -1,6 +1,10 @@
 function theta = calcIK(pose,thetaInit,q,w,gSensor0,gToolSurface0,gToolCG0)
-    pd = pose(1:3);
-    qd = quaternion([pose(7),pose(4:6)']);
+    % convert pose from homog transform 4x4 to translation and quat
+    %pd = pose(1:3);
+    %qd = quaternion([pose(7),pose(4:6)']);
+    
+    pd = pose(1:3,4);
+    qd = quaternion(pose(1:3,1:3),'rotmat','point');
     
     error = 1;
     iter = 0;
