@@ -1,5 +1,8 @@
 % Spring 2020 16-711 KDC
 % Project
+clear
+clc
+close all
 
 %% README
 % Run this script to run a simulation of the model
@@ -38,13 +41,9 @@ theta = theta0; % track joint angles independently for plotting
 % Initialize animation figure
 figure()
 hold off
-xlabel('x')
-ylabel('y')
-zlabel('z')
-title('Animated Robot Arm')
+
 
 toolPos = [];
-figure()
 for t = 1:size(FtoolSim,2)
     % Simulator:
     % Compute FK and simulated Fsensor
@@ -56,15 +55,26 @@ for t = 1:size(FtoolSim,2)
     % Compute Ftool from Fsensor and FK
     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
     % Plot arm links and tool trajectory
-    animateArm(jointPos)
+%     animateArm(jointPos)
+    plot3(jointPos(:,1), jointPos(:,2), jointPos(:,3), 'o-', 'LineWidth', 1.5)
+    grid on
+    xlim([-2, 2])
+    ylim([-2, 2])
+    zlim([-2, 2])
+    xlabel('x')
+    ylabel('y')
+    zlabel('z')
+    title('Animated Robot Arm')
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
     % Obtain desired pose from FEstApp
-    desiredPose = forceToPose(gToolSurface, FEstApp);
+    desiredPose = forceToPose(gToolSurface, FEstApp)
     % Perform IK and obtain newTheta
+    disp(t)
     theta = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+    disp(t)
 end
 
-hold on
-plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), '--', 'b', 'LineWidth', 1.5)
-legend('Arm Links', 'Tool Path')
+% hold on
+% plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), '--', 'b', 'LineWidth', 1.5)
+% legend('Arm Links', 'Tool Path')
