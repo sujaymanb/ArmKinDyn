@@ -1,9 +1,6 @@
 function theta = calcIKSingleStep(FEstApp,thetaInit,q,w,currPose)
 % currPose: 4x4 gToolCG
 
-pc = currPose(1:3,4);
-qc = currPose(1:3,1:3);
-
 % Direction and magnitude of force
 force = FEstApp(1:3);
 kp = norm(force).*1;
