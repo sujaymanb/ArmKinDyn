@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 1;
+mode = 2;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -42,12 +42,12 @@ theta = theta0; % track joint angles independently for plotting
 figure()
 hold off
 
+[gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
 
 toolPos = [];
 for t = 1:size(FtoolSim,2)
     % Simulator:
     % Compute FK and simulated Fsensor
-    [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
     toolPos = [toolPos gToolCG(1:3,end)];
     Fsensor = calcInvStatics(FtoolSim(:,t), gSensor, gToolCG);
     
@@ -58,23 +58,25 @@ for t = 1:size(FtoolSim,2)
 %     animateArm(jointPos)
     plot3(jointPos(:,1), jointPos(:,2), jointPos(:,3), 'o-', 'LineWidth', 1.5)
     grid on
-    xlim([-2, 2])
-    ylim([-2, 2])
-    zlim([-2, 2])
+    xlim([-1, 2])
+    ylim([-1, 2])
+    zlim([-1, 4.5])
     xlabel('x')
     ylabel('y')
     zlabel('z')
     title('Animated Robot Arm')
+    pause(0.2)
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
     % Obtain desired pose from FEstApp
-    desiredPose = forceToPose(gToolSurface, FEstApp)
+    desiredPose = forceToPose(gToolSurface, FEstApp);
     % Perform IK and obtain newTheta
-    disp(t)
-    theta = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
-    disp(t)
+    theta2 = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+    disp((theta2-theta)*180/pi)
+    [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor,gToolSurface,gToolCG);
+    theta = theta2;
 end
 
-% hold on
-% plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), '--', 'b', 'LineWidth', 1.5)
-% legend('Arm Links', 'Tool Path')
+hold on
+plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), '--', 'LineWidth', 1.5)
+legend('Arm Links', 'Tool Path')
