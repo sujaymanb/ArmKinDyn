@@ -20,7 +20,7 @@ function theta = calcIK(pose,thetaInit,q,w,gSensor0,gToolSurface0,gToolCG0)
     
     twists = calcTwists(q,w);
     
-    while((error > 1e-2) && (iter < 100))
+    while((error > 1e-2) && (iter < 1000))
        iter = iter + 1;
        [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(thetaCur,q,w,gSensor0,gToolSurface0,gToolCG0);
       
