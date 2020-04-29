@@ -8,6 +8,6 @@ FEstApp = Ftool;
 if gCompBool
     RotMat = inv(gSensor(1:3,1:3));
     gRot = RotMat*g;
-    FEstA(1:3) = FEstA(1:3) - mTool.*gRot;
+    FEstApp(1:3) = FEstApp(1:3) - mTool.*gRot;
 end
 end
