@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 1;
+mode = 2;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -26,7 +26,7 @@ run('loadSysParams.m')
 %% Generate Fapplied vector (inertial frame), 6xN
 Fapplied = genAppForce(mode);
 FtoolSim = Fapplied;
-FtoolSim(1:3,:) = FtoolSim(1:3,:) - mTool.*g; % add force due to gravity
+FtoolSim(1:3,:) = FtoolSim(1:3,:) + mTool.*g; % add force due to gravity
 
 gravCompBool = false;
 if ismember(mode, [2,4,5,6])
@@ -34,16 +34,23 @@ if ismember(mode, [2,4,5,6])
 end
 
 %% Initialize system
-theta0 = [30; 30; 0; 60; 0; 45; 0].*pi./180; %[radians], starting pose of robot
+theta0 = [30; 30; 0; 15; 0; 0; 0].*pi./180; %[radians], starting pose of robot
 theta = theta0; % track joint angles independently for plotting
 
 %% Iterate through time steps
+[gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+
+% %----debug force estimation
+% Fsensor = calcInvStatics(FtoolSim(:,1), gSensor0, gToolCG0);
+% Ftool = calcStatics(Fsensor, gSensor0, gToolCG0);
+% FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor0);
+% disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
+% disp([Fapplied(:,1), FtoolSim(:,1), Fsensor, Ftool, FEstApp])
+% %--------------------
+
 % Initialize animation figure
 figure()
 hold off
-
-[gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
-
 toolPos = [];
 for t = 1:size(FtoolSim,2)
     % Simulator:
@@ -58,9 +65,9 @@ for t = 1:size(FtoolSim,2)
 %     animateArm(jointPos)
     plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'o-', 'LineWidth', 1.5)
     grid on
-    xlim([-1, 2])
-    ylim([-1, 2])
-    zlim([-1, 4.5])
+    xlim([-1.5, 1.5])
+    ylim([-1.5, 1.5])
+    zlim([-0.5, 1.5])
     xlabel('x')
     ylabel('y')
     zlabel('z')
@@ -68,12 +75,14 @@ for t = 1:size(FtoolSim,2)
     pause(0.2)
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
+    disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
+    disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
     % Obtain desired pose from FEstApp
 %     desiredPose = forceToPose(gToolSurface, FEstApp);
     % Perform IK and obtain newTheta
 %     theta2 = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
     theta2 = calcIKSingleStep(FEstApp,theta,q,w,gToolCG);
-    disp((theta2-theta)*180/pi)
+%     disp((theta2-theta)*180/pi)
     [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor,gToolSurface,gToolCG);
     theta = theta2;
 end
