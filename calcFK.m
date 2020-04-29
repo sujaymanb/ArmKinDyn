@@ -18,7 +18,8 @@ function [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,
         %rotx(axisR(i))
         g0 = [eye(3), q(i,:)';
             [0,0,0], 1];
-        gJoint = g0 * g;
+%         gJoint = g0 * g;
+        gJoint = g*g0;
         jointPos(i,:) = gJoint(1:3,4)';
     end
     gSensor = g * gSensor0;
