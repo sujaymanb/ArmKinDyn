@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 2;
+mode = 1;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -56,7 +56,7 @@ for t = 1:size(FtoolSim,2)
     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
     % Plot arm links and tool trajectory
 %     animateArm(jointPos)
-    plot3(jointPos(:,1), jointPos(:,2), jointPos(:,3), 'o-', 'LineWidth', 1.5)
+    plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'o-', 'LineWidth', 1.5)
     grid on
     xlim([-1, 2])
     ylim([-1, 2])
@@ -69,9 +69,10 @@ for t = 1:size(FtoolSim,2)
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
     % Obtain desired pose from FEstApp
-    desiredPose = forceToPose(gToolSurface, FEstApp);
+%     desiredPose = forceToPose(gToolSurface, FEstApp);
     % Perform IK and obtain newTheta
-    theta2 = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+%     theta2 = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+    theta2 = calcIKSingleStep(FEstApp,theta,q,w,gToolCG);
     disp((theta2-theta)*180/pi)
     [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor,gToolSurface,gToolCG);
     theta = theta2;
