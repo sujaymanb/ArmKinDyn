@@ -40,13 +40,13 @@ theta = theta0; % track joint angles independently for plotting
 %% Iterate through time steps
 [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
 
-% %----debug force estimation
+% % ----debug force estimation
 % Fsensor = calcInvStatics(FtoolSim(:,1), gSensor0, gToolCG0);
 % Ftool = calcStatics(Fsensor, gSensor0, gToolCG0);
 % FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor0);
 % disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
 % disp([Fapplied(:,1), FtoolSim(:,1), Fsensor, Ftool, FEstApp])
-% %--------------------
+% % --------------------
 
 % Initialize animation figure
 figure()
@@ -55,7 +55,7 @@ toolPos = [];
 for t = 1:size(FtoolSim,2)
     % Simulator:
     % Compute FK and simulated Fsensor
-    toolPos = [toolPos gToolCG(1:3,end)];
+    toolPos = [toolPos gSensor(1:3,end)];
     Fsensor = calcInvStatics(FtoolSim(:,t), gSensor, gToolCG);
     
     % Controller:
@@ -83,7 +83,7 @@ for t = 1:size(FtoolSim,2)
 %     theta2 = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
     theta2 = calcIKSingleStep(FEstApp,theta,q,w,gToolCG);
 %     disp((theta2-theta)*180/pi)
-    [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor,gToolSurface,gToolCG);
+    [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor0,gToolSurface0,gToolCG0);
     theta = theta2;
 end
 
