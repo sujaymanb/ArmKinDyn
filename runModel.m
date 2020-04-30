@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 4;
+mode = 6;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -19,13 +19,15 @@ mode = 4;
 %    compensation turned on
 % 5: External force on tool as pure rotational torque
 % 6: General external force on tool
+% 7: Random force without axis guidance
+% 8: Random force with axis guidance
 
 %% !!!DO NOT EDIT BELOW!!!
 run('loadSysParams.m')
 kp = 0.2;
 kq = 0.2;
 T = 80;
-maxF = 10; %[N]
+maxF = 15; %[N]
 maxTau = 10; %[Nm]
 
 %% Generate Fapplied vector (inertial frame), 6xN
@@ -36,6 +38,11 @@ FtoolSim(1:3,:) = FtoolSim(1:3,:) + mTool.*g; % add force due to gravity
 gravCompBool = false;
 if ismember(mode, [2,4,5,6])
     gravCompBool = true;
+end
+
+axisGuidanceBool = false;
+if mode==8
+    axisGuidanceBool = True;
 end
 
 %% Initialize system
@@ -73,13 +80,13 @@ for t = 1:size(FtoolSim,2)
     plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), 'r-', 'LineWidth', 1.5)
     hold on
     plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'bo-', 'LineWidth', 1.5)
-    plot3([jointPos(7,1) toolPos(1,end)], [jointPos(7,2) toolPos(2,end)], [jointPos(7,3) toolPos(3,end)], 'g-', 'LineWidth', 1.5)
+    plot3([jointPos(7,1) toolPos(1,end)], [jointPos(7,2) toolPos(2,end)], [jointPos(7,3) toolPos(3,end)], 'g-', 'LineWidth', 5)
     hold off
     legend('Tool Path', 'Arm Links', 'Tool')
     grid on
-    xlim([-1.5, 1.5])
-    ylim([-1.5, 1.5])
-    zlim([-0.5, 1.5])
+    xlim([-1, 1])
+    ylim([-1, 1])
+    zlim([0, 1.5])
     xlabel('x')
     ylabel('y')
     zlabel('z')
@@ -87,6 +94,10 @@ for t = 1:size(FtoolSim,2)
     pause(0.001)
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool);
+    if axisGuidanceBool
+        % cancel non-tool axis components of force with new function
+        % FEstApp = 
+    end
     disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
     disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
     % Obtain desired pose from FEstApp, perform IK, and obtain newTheta
