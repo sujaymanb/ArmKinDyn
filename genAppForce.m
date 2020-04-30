@@ -28,7 +28,13 @@ elseif mode==5
     tau = maxTau.*tau;
     Fapplied = [f; tau];
 elseif mode==6
-    %F = circular translational force
+    theta = linspace(0,720,T).*pi/180;
+    f = [ ones(1,T).*cos(theta);
+          ones(1,T).*sin(theta);
+          -ones(1,T).*0.1];
+    tau = zeros(3,T);
+    f = maxF.*f;
+    Fapplied = [f; tau];
 else
     print('Please enter a valid value for mode')
     Fapplied = Nan;
