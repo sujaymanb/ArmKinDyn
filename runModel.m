@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 3;
+mode = 4;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -22,9 +22,9 @@ mode = 3;
 
 %% !!!DO NOT EDIT BELOW!!!
 run('loadSysParams.m')
-kp = 0.1;
-kq = 0.1;
-T = 1000;
+kp = 0.2;
+kq = 0.2;
+T = 80;
 maxF = 10; %[N]
 maxTau = 10; %[Nm]
 
@@ -39,19 +39,19 @@ if ismember(mode, [2,4,5,6])
 end
 
 %% Initialize system
-theta0 = [30; 30; 0; 15; 0; 0; 0].*pi./180; %[radians], starting pose of robot
+theta0 = [30; -60; 0; 45; 0; -10; 0].*pi./180; %[radians], starting pose of robot
 theta = theta0; % track joint angles independently for plotting
 
 %% Iterate through time steps
 [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
 
-% ----debug force estimation
-Fsensor = calcInvStatics(FtoolSim(:,1), gSensor0, gToolCG0);
-Ftool = calcStatics(Fsensor, gSensor0, gToolCG0);
-FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor0);
-disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
-disp([Fapplied(:,1), FtoolSim(:,1), Fsensor, Ftool, FEstApp])
-% --------------------
+% % ----debug force estimation
+% Fsensor = calcInvStatics(FtoolSim(:,1), gSensor0, gToolCG0);
+% Ftool = calcStatics(Fsensor, gSensor0, gToolCG0);
+% FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor0);
+% disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
+% disp([Fapplied(:,1), FtoolSim(:,1), Fsensor, Ftool, FEstApp])
+% % --------------------
 
 % Initialize animation figure
 figure()
@@ -67,11 +67,12 @@ for t = 1:size(FtoolSim,2)
     % Compute Ftool from Fsensor and FK
     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
     % Plot arm links and tool trajectory
-    plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), 'r--', 'LineWidth', 1.5)
+    plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), 'r-', 'LineWidth', 1.5)
     hold on
     plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'bo-', 'LineWidth', 1.5)
+    plot3([jointPos(7,1) toolPos(1,end)], [jointPos(7,2) toolPos(2,end)], [jointPos(7,3) toolPos(3,end)], 'g-', 'LineWidth', 1.5)
     hold off
-    legend('Tool Path', 'Arm Links')
+    legend('Tool Path', 'Arm Links', 'Tool')
     grid on
     xlim([-1.5, 1.5])
     ylim([-1.5, 1.5])
@@ -82,7 +83,7 @@ for t = 1:size(FtoolSim,2)
     title('Animated Robot Arm')
     pause(0.001)
     % Compute FEstApp from gravity compensator based on mode
-    FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
+    FEstApp = gravityComp(gravCompBool, mTool, g, Ftool);
     disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
     disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
     % Obtain desired pose from FEstApp, perform IK, and obtain newTheta

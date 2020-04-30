@@ -15,9 +15,9 @@ if mode==1 || mode==2
     Fapplied = zeros(6,T);
 elseif mode==3 || mode==4
     tau = zeros(3,T);
-    f = [ ones(1,T/4),  ones(1,T/4),  -ones(1,T/4),  -ones(1,T/4);
-          ones(1,T/4), -ones(1,T/4),   ones(1,T/4),  -ones(1,T/4);
-         -ones(1,T/4), -ones(1,T/4),   ones(1,T/4),   ones(1,T/4)];
+    f = [ ones(1,T/4),  ones(1,T/4),    zeros(1,T/4),  zeros(1,T/4);
+          ones(1,T/4),  ones(1,T/4),   -ones(1,T/4),  -ones(1,T/4);
+          zeros(1,T/4), zeros(1,T/4),   -ones(1,T/4),  -ones(1,T/4)];
     f = maxF.*f;
     Fapplied = [f; tau];
 elseif mode==5
