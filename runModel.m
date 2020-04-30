@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 2;
+mode = 1;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -40,13 +40,13 @@ theta = theta0; % track joint angles independently for plotting
 %% Iterate through time steps
 [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
 
-% % ----debug force estimation
-% Fsensor = calcInvStatics(FtoolSim(:,1), gSensor0, gToolCG0);
-% Ftool = calcStatics(Fsensor, gSensor0, gToolCG0);
-% FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor0);
-% disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
-% disp([Fapplied(:,1), FtoolSim(:,1), Fsensor, Ftool, FEstApp])
-% % --------------------
+% ----debug force estimation
+Fsensor = calcInvStatics(FtoolSim(:,1), gSensor0, gToolCG0);
+Ftool = calcStatics(Fsensor, gSensor0, gToolCG0);
+FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor0);
+disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
+disp([Fapplied(:,1), FtoolSim(:,1), Fsensor, Ftool, FEstApp])
+% --------------------
 
 % Initialize animation figure
 figure()
@@ -63,7 +63,11 @@ for t = 1:size(FtoolSim,2)
     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
     % Plot arm links and tool trajectory
 %     animateArm(jointPos)
-    plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'o-', 'LineWidth', 1.5)
+    plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), 'r--', 'LineWidth', 1.5)
+    hold on
+    plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'bo-', 'LineWidth', 1.5)
+    hold off
+    legend('Tool Path', 'Arm Links')
     grid on
     xlim([-1.5, 1.5])
     ylim([-1.5, 1.5])
@@ -86,7 +90,3 @@ for t = 1:size(FtoolSim,2)
     [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor0,gToolSurface0,gToolCG0);
     theta = theta2;
 end
-
-hold on
-plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), '--', 'LineWidth', 1.5)
-legend('Arm Links', 'Tool Path')
