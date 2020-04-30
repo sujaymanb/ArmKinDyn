@@ -1,4 +1,4 @@
-function FEstApp = gravityComp(gCompBool, mTool, g, Ftool, gSensor)
+function FEstApp = gravityComp(gCompBool, mTool, g, Ftool)
 % gCompBool: gravity compensation turned on or off
 % Ftool: 6x1 force vector
 % gSensor: 4x4 position and orientation of sensor
@@ -6,8 +6,6 @@ function FEstApp = gravityComp(gCompBool, mTool, g, Ftool, gSensor)
 
 FEstApp = Ftool;
 if gCompBool
-    RotMat = inv(gSensor(1:3,1:3));
-    gRot = RotMat*g;
-    FEstApp(1:3) = FEstApp(1:3) - mTool.*gRot;
+    FEstApp(1:3) = FEstApp(1:3) - mTool.*g;
 end
 end
