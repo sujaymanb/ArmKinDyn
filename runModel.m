@@ -57,6 +57,9 @@ theta = theta0; % track joint angles independently for plotting
 figure()
 hold off
 toolPos = [];
+axis = [1, 0, 0;
+        0, 1, 0;
+        0, 0, 1];
 for t = 1:size(FtoolSim,2)
     % Simulator:
     % Compute FK and simulated Fsensor
