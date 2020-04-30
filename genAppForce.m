@@ -1,4 +1,4 @@
-function Fapplied = genAppForce(mode)
+function Fapplied = genAppForce(mode,T,maxF,maxTau)
 % mode: scalar [1,6]
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
@@ -10,10 +10,6 @@ function Fapplied = genAppForce(mode)
 % 6: General external force on tool
 % Fapplied: 6xT array of applied forces, T=10000, to be tuned
 
-T = 40; %[ms] total time, 10 seconds
-maxF = 1; %[N]
-maxTau = 2; %[N]
-
 
 if mode==1 || mode==2
     Fapplied = zeros(6,T);
@@ -22,12 +18,14 @@ elseif mode==3 || mode==4
     f = [ ones(1,T/4),  ones(1,T/4),  -ones(1,T/4),  -ones(1,T/4);
           ones(1,T/4), -ones(1,T/4),   ones(1,T/4),  -ones(1,T/4);
          -ones(1,T/4), -ones(1,T/4),   ones(1,T/4),   ones(1,T/4)];
+    f = maxF.*f;
     Fapplied = [f; tau];
 elseif mode==5
     f = zeros(3,T);
     tau = [ ones(1,T/4),  ones(1,T/4),  -ones(1,T/4),  -ones(1,T/4);
             ones(1,T/4), -ones(1,T/4),   ones(1,T/4),  -ones(1,T/4);
            -ones(1,T/4), -ones(1,T/4),   ones(1,T/4),   ones(1,T/4)];
+    tau = maxTau.*tau;
     Fapplied = [f; tau];
 elseif mode==6
     %F = circular translational force
