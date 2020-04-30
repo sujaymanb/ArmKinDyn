@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 1;
+mode = 3;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -22,9 +22,14 @@ mode = 1;
 
 %% !!!DO NOT EDIT BELOW!!!
 run('loadSysParams.m')
+kp = 0.1;
+kq = 0.1;
+T = 1000;
+maxF = 10; %[N]
+maxTau = 10; %[Nm]
 
 %% Generate Fapplied vector (inertial frame), 6xN
-Fapplied = genAppForce(mode);
+Fapplied = genAppForce(mode,T,maxF,maxTau);
 FtoolSim = Fapplied;
 FtoolSim(1:3,:) = FtoolSim(1:3,:) + mTool.*g; % add force due to gravity
 
@@ -62,7 +67,6 @@ for t = 1:size(FtoolSim,2)
     % Compute Ftool from Fsensor and FK
     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
     % Plot arm links and tool trajectory
-%     animateArm(jointPos)
     plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), 'r--', 'LineWidth', 1.5)
     hold on
     plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'bo-', 'LineWidth', 1.5)
@@ -76,17 +80,13 @@ for t = 1:size(FtoolSim,2)
     ylabel('y')
     zlabel('z')
     title('Animated Robot Arm')
-    pause(0.2)
+    pause(0.001)
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool, gSensor);
     disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
     disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
-    % Obtain desired pose from FEstApp
-%     desiredPose = forceToPose(gToolSurface, FEstApp);
-    % Perform IK and obtain newTheta
-%     theta2 = calcIK(desiredPose,theta,q,w,gSensor0,gToolSurface0,gToolCG0);
-    theta2 = calcIKSingleStep(FEstApp,theta,q,w,gToolCG);
-%     disp((theta2-theta)*180/pi)
+    % Obtain desired pose from FEstApp, perform IK, and obtain newTheta
+    theta2 = calcIKSingleStep(FEstApp,theta,q,w,gToolCG,kp,kq);
     [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor0,gToolSurface0,gToolCG0);
     theta = theta2;
 end
