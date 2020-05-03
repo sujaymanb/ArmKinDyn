@@ -35,6 +35,11 @@ elseif mode==6
     tau = zeros(3,T);
     f = maxF.*f;
     Fapplied = [f; tau];
+elseif mode==7 || mode==8
+    tau = zeros(3,T);
+    f = -1 + (1+1).*rand(3,T);
+    f = maxF.*f;
+    Fapplied = [f; tau];
 else
     print('Please enter a valid value for mode')
     Fapplied = Nan;
