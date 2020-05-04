@@ -26,8 +26,8 @@ mode = 8;
 run('loadSysParams.m')
 kp = 0.2;
 kq = 0.5;
-T = 80;
-maxF = 10; %[N]
+T = 40;
+maxF = 8; %[N]
 maxTau = 10; %[Nm]
 
 %% Generate Fapplied vector (inertial frame), 6xN
@@ -47,6 +47,7 @@ end
 
 %% Initialize system
 theta0 = [30; -60; 0; 45; 0; -10; 0].*pi./180; %[radians], starting pose of robot
+%theta0 = [0; 0; 0; 0; 0; 0; 0].*pi./180;
 theta = theta0; % track joint angles independently for plotting
 
 %% Iterate through time steps
@@ -92,7 +93,7 @@ for t = 1:size(FtoolSim,2)
     grid on
     xlim([-1, 1])
     ylim([-1, 1])
-    zlim([0, 1.5])
+    zlim([0, 2])
     xlabel('x')
     ylabel('y')
     zlabel('z')
@@ -104,6 +105,7 @@ for t = 1:size(FtoolSim,2)
         % cancel non-tool axis components of force with new function
         FEstApp = axisGuidance(FEstApp, gToolSurface);
     end
+    disp([gToolSurface(1:3,3) FEstApp(1:3)/norm(FEstApp(1:3))])
     %disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
     %disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
     % Obtain desired pose from FEstApp, perform IK, and obtain newTheta
