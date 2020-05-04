@@ -37,7 +37,19 @@ elseif mode==6
     Fapplied = [f; tau];
 elseif mode==7 || mode==8
     tau = zeros(3,T);
-    f = -1 + (1+1).*rand(3,T);
+    f1 = -1 + (1+1).*rand(3,1);
+    f2 = -1 + (1+1).*rand(3,1);
+    f3 = -1 + (1+1).*rand(3,1);
+    f4 = -1 + (1+1).*rand(3,1);
+    
+    ind = floor(T/4);
+    
+    f = zeros(3,T);
+    for i=1:ind, f(:,i) = f1; end
+    for i=ind+1:2*ind, f(:,i) = f2; end
+    for i=2*ind+1:3*ind, f(:,i) = f3; end
+    for i=3*ind+1:4*ind, f(:,i) = f4; end
+    
     f = maxF.*f;
     Fapplied = [f; tau];
 else

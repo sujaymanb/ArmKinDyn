@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 6;
+mode = 8;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -27,7 +27,7 @@ run('loadSysParams.m')
 kp = 0.2;
 kq = 0.5;
 T = 80;
-maxF = 15; %[N]
+maxF = 10; %[N]
 maxTau = 10; %[Nm]
 
 %% Generate Fapplied vector (inertial frame), 6xN

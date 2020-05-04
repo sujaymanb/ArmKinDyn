@@ -12,7 +12,7 @@ function FEstApp = axisGuidance(F, gToolSurface)
     torqueToolFrame(2:3) = 0;
     
     % transform back to world frame
-    forceToolFrame = inv(gToolSurface) * forceToolFrame;
-    torqueToolFrame = inv(gToolSurface) * torqueToolFrame;
-    FEstApp = [forceToolFrame(1:3);torqueToolFrame(1:3)];
+    force = inv(gToolSurface) * forceToolFrame;
+    torque = inv(gToolSurface) * torqueToolFrame;
+    FEstApp = [force(1:3);torque(1:3)];
 end
