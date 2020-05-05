@@ -51,7 +51,7 @@ theta0 = [30; -60; 0; 45; 0; -10; 0].*pi./180; %[radians], starting pose of robo
 theta = theta0; % track joint angles independently for plotting
 
 %% Iterate through time steps
-[gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0);
+[gSensor, gToolSurface, gToolCG, ~, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0,gToolTip0);
 
 % % ----debug force estimation
 % Fsensor = calcInvStatics(FtoolSim(:,1), gSensor0, gToolCG0);
@@ -110,6 +110,6 @@ for t = 1:size(FtoolSim,2)
     %disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
     % Obtain desired pose from FEstApp, perform IK, and obtain newTheta
     theta2 = calcIKSingleStep(FEstApp,theta,q,w,gToolCG,kp,kq);
-    [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta2,q,w,gSensor0,gToolSurface0,gToolCG0);
+    [gSensor, gToolSurface, gToolCG, ~, jointPos] = calcFK(theta2,q,w,gSensor0,gToolSurface0,gToolCG0,gToolTip0);
     theta = theta2;
 end

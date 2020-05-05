@@ -1,4 +1,4 @@
-function [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0)
+function [gSensor, gToolSurface, gToolCG, gToolTip, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0,gToolTip0)
 % theta: 7x1 joint angles
 % gSensor: transform to obtain position and orientation of sensor face
 % gToolSurface: transform to obtain position and orientation of tool face
@@ -25,6 +25,7 @@ function [gSensor, gToolSurface, gToolCG, jointPos] = calcFK(theta,q,w,gSensor0,
     gSensor = g * gSensor0;
     gToolSurface = g * gToolSurface0;
     gToolCG = g * gToolCG0;
+    gToolTip = g * gToolTip0;
 
 end
 
