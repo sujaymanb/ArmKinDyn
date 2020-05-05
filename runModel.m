@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 8;
+mode = 4;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -36,7 +36,7 @@ FtoolSim = Fapplied;
 FtoolSim(1:3,:) = FtoolSim(1:3,:) + mTool.*g; % add force due to gravity
 
 gravCompBool = false;
-if ismember(mode, [2,4,5,6])
+if ismember(mode, [2,4,5,6,8])
     gravCompBool = true;
 end
 
@@ -78,27 +78,13 @@ for t = 1:size(FtoolSim,2)
     % Controller:
     % Compute Ftool from Fsensor and FK
     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
-    % Plot arm links and tool trajectory
-    plot3(toolPos(1,:), toolPos(2,:), toolPos(3,:), 'k-', 'LineWidth', 1.5)
-    hold on
-    plot3(jointPos([1, 2, 4, 6, 7],1), jointPos([1, 2, 4, 6, 7],2), jointPos([1, 2, 4, 6, 7],3), 'bo-', 'LineWidth', 1.5)
-    plot3([jointPos(7,1) toolPos(1,end)], [jointPos(7,2) toolPos(2,end)], [jointPos(7,3) toolPos(3,end)], 'g-', 'LineWidth', 5)
-    % plot axis
+    
     rotAxis = gToolSurface * axis;
-    plot3([gToolSurface(1,end),rotAxis(1,1)],[gToolSurface(2,end),rotAxis(2,1)],[gToolSurface(3,end),rotAxis(3,1)], 'r-', 'LineWidth', 1.5)
-    plot3([gToolSurface(1,end),rotAxis(1,2)],[gToolSurface(2,end),rotAxis(2,2)],[gToolSurface(3,end),rotAxis(3,2)], 'g-', 'LineWidth', 1.5)
-    plot3([gToolSurface(1,end),rotAxis(1,3)],[gToolSurface(2,end),rotAxis(2,3)],[gToolSurface(3,end),rotAxis(3,3)], 'b-', 'LineWidth', 1.5)
-    hold off
-    legend('Tool Path', 'Arm Links', 'Tool')
-    grid on
-    xlim([-1, 1])
-    ylim([-1, 1])
-    zlim([0, 2])
-    xlabel('x')
-    ylabel('y')
-    zlabel('z')
+    % Plot arm links and tool trajectory
+    animateArm(jointPos,toolPos,gToolSurface,rotAxis)
     title('Animated Robot Arm')
     pause(0.001)
+    
     % Compute FEstApp from gravity compensator based on mode
     FEstApp = gravityComp(gravCompBool, mTool, g, Ftool);
     if axisGuidanceBool
