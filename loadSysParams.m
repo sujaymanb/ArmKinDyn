@@ -39,6 +39,10 @@ gToolSurface0 = [cosd(toolSurfaceAngle0)  0  sind(toolSurfaceAngle0)  0.00614+0.
                  -sind(toolSurfaceAngle0) 0  cosd(toolSurfaceAngle0)  gSensor0(3,end)+0.15764
                  0 0 0 1]; %[m]
 
+%% Tool tip position
+gToolTip0 = gToolSurface0;
+gToolTip0(1:3,end) = [0.22-0.01984; 0.14; gSensor0(3,end)+0.17264];
+
 %% Tool mass and position of tool CG
 gToolCG0 = [1 0 0 0.00244+0.220
             0 1 0 0.140
