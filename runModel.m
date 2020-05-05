@@ -105,7 +105,7 @@ for t = 1:size(FtoolSim,2)
         % cancel non-tool axis components of force with new function
         FEstApp = axisGuidance(FEstApp, gToolSurface);
     end
-    disp([gToolSurface(1:3,3) FEstApp(1:3)/norm(FEstApp(1:3))])
+    %disp([gToolSurface(1:3,3) FEstApp(1:3)/norm(FEstApp(1:3))])
     %disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
     %disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
     % Obtain desired pose from FEstApp, perform IK, and obtain newTheta
