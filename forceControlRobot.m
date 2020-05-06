@@ -1,16 +1,18 @@
-function [gSensor,gToolSurface,gToolCG,gToolTip,jointPos,vel] = forceControlRobot(masterBool, Fsensor,theta,q,w,gSensor0,gToolCG0,gToolSurface0,gToolTip0,mTool,g,kp,kq,axisGuidanceBool)
+function [gSensor,gToolSurface,gToolCG,gToolTip,jointPos,vel,theta2] = forceControlRobot(masterBool, Fsensor,theta,q,w,gSensor0,gToolCG0,gToolSurface0,gToolTip0,mTool,g,kp,kq,axisGuidanceBool)
 
 % Obtain current FK
 [gSensor, gToolSurface, gToolCG, gToolTip, jointPos] = calcFK(theta,q,w,gSensor0,gToolSurface0,gToolCG0,gToolTip0);
 
 % Compute Ftool from Fsensor and FK
-if masterBool
-    Ftool = calcStatics(Fsensor, gSensor, gToolCG);
-    vel = gToolCG(1:3,end);
-else
-    Ftool = calcStatics(Fsensor, gSensor, gToolTip);
-    vel = gToolTip(1:3,end);
-end
+% if masterBool
+%     Ftool = calcStatics(Fsensor, gSensor, gToolCG);
+%     vel = gToolCG(1:3,end);
+% else
+%     Ftool = calcStatics(Fsensor, gSensor, gToolTip);
+%     vel = gToolTip(1:3,end);
+% end
+Ftool = calcStatics(Fsensor, gSensor, gToolCG);
+vel = gToolCG(1:3,end);
 
 % Compute FEstApp from gravity compensator based on mode
 gravCompBool = true;
