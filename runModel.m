@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 4;
+mode = 6;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -62,7 +62,7 @@ theta = theta0; % track joint angles independently for plotting
 % % --------------------
 
 % Initialize animation figure
-figure('Renderer', 'painters', 'Position', [10 10 900 600])
+figure('Renderer', 'painters', 'Position', [80 80 1400 800])
 hold off
 toolPos = [];
 axis = [0.1, 0, 0;
