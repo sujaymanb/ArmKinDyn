@@ -22,9 +22,9 @@ elseif mode==3 || mode==4
     Fapplied = [f; tau];
 elseif mode==5
     f = zeros(3,T);
-    tau = [ ones(1,T/4),  ones(1,T/4),  -ones(1,T/4),  -ones(1,T/4);
-            ones(1,T/4), -ones(1,T/4),   ones(1,T/4),  -ones(1,T/4);
-           -ones(1,T/4), -ones(1,T/4),   ones(1,T/4),   ones(1,T/4)];
+    tau = [ ones(1,T/4),  ones(1,T/4),   ones(1,T/4),   ones(1,T/4);
+            ones(1,T/4),  ones(1,T/4),   ones(1,T/4),   ones(1,T/4);
+           zeros(1,T/4), zeros(1,T/4),  zeros(1,T/4),  zeros(1,T/4)];
     tau = maxTau.*tau;
     Fapplied = [f; tau];
 elseif mode==6
@@ -43,6 +43,13 @@ elseif mode==7 || mode==8
     f = maxF.*f;
     Fapplied = [f; tau];
 elseif mode==9
+    tau = zeros(3,T);
+    f = [ ones(1,T/4),  ones(1,T/4),    ones(1,T/4),   ones(1,T/4);
+          ones(1,T/4),  ones(1,T/4),    ones(1,T/4),   ones(1,T/4);
+          zeros(1,T/4), zeros(1,T/4),   zeros(1,T/4),  zeros(1,T/4)];
+    f = maxF.*f;
+    Fapplied = [f; tau];
+elseif mode==10
     tau = zeros(3,T);
     f = [ ones(1,T/4),  ones(1,T/4),    ones(1,T/4),   ones(1,T/4);
           ones(1,T/4),  ones(1,T/4),    ones(1,T/4),   ones(1,T/4);

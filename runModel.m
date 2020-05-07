@@ -10,7 +10,7 @@ close all
 % the line below.
 
 %% Run mode
-mode = 6;
+mode = 10;
 % 1: No external force on tool, gravity compensation turned off
 % 2: No external force on tool, gravity compensation turned on
 % 3: External force on tool as pure translational force, gravity
@@ -21,14 +21,16 @@ mode = 6;
 % 6: General external force on tool
 % 7: Random force without axis guidance
 % 8: Random force with axis guidance
+% 9: Random force with axis guidance turned on after T/4
+%10: Single force direction with axis guidance
 
 %% !!!DO NOT EDIT BELOW!!!
 run('loadSysParams.m')
 kp = 0.2;
-kq = 0.5;
+kq = 0.1;
 T = 40;
 maxF = 8; %[N]
-maxTau = 10; %[Nm]
+maxTau = 5; %[Nm]
 
 %% Generate Fapplied vector (inertial frame), 6xN
 Fapplied = genAppForce(mode,T,maxF,maxTau);
@@ -41,7 +43,7 @@ if ismember(mode, [2,4,5,6,8])
 end
 
 axisGuidanceBool = false;
-if mode==8
+if ismember(mode, [8,10])
     axisGuidanceBool = true;
 end
 
@@ -71,6 +73,9 @@ axis = [0.1, 0, 0;
         1, 1, 1];
 for t = 1:size(FtoolSim,2)
     % Simulator:
+    if mode==9 && t>=T/2
+        axisGuidanceBool=true;
+    end
     % Compute FK and simulated Fsensor
     toolPos = [toolPos gToolSurface(1:3,end)];
     Fsensor = calcInvStatics(FtoolSim(:,t), gSensor, gToolCG);
@@ -92,8 +97,8 @@ for t = 1:size(FtoolSim,2)
         FEstApp = axisGuidance(FEstApp, gToolSurface);
     end
     %disp([gToolSurface(1:3,3) FEstApp(1:3)/norm(FEstApp(1:3))])
-    %disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
-    %disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
+%     disp(' Fapplied    FtoolSim    Fsensor    Ftool    FEstApp')
+%     disp([Fapplied(:,t), FtoolSim(:,t), Fsensor, Ftool, FEstApp])
     % Obtain desired pose from FEstApp, perform IK, and obtain newTheta
     theta2 = calcIKSingleStep(FEstApp,theta,q,w,gToolCG,kp,kq);
     [gSensor, gToolSurface, gToolCG, ~, jointPos] = calcFK(theta2,q,w,gSensor0,gToolSurface0,gToolCG0,gToolTip0);
