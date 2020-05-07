@@ -19,14 +19,19 @@ end
 velT = kp*force;
 
 % Rotational velocity using torque
-xsquat = quaternion(eul2quat([0 0 0]));
-xd1quat = quaternion(eul2quat(torque'));
-xomega1 = xd1quat./xsquat;
-[wd1, id1, jd1, kd1] = parts(xomega1);
-id1 = sign(wd1)*id1;
-jd1 = sign(wd1)*jd1;
-kd1 = sign(wd1)*kd1;
-V = [velT; id1; jd1; kd1];
+% xsquat = quaternion(eul2quat([0 0 0]));
+% xd1quat = quaternion(eul2quat(torque'));
+% xomega1 = xd1quat./xsquat;
+% [wd1, id1, jd1, kd1] = parts(xomega1);
+% id1 = sign(wd1)*id1;
+% jd1 = sign(wd1)*jd1;
+% kd1 = sign(wd1)*kd1;
+% omega = kq.*[id1; jd1; kd1];
+omega = kq.*torque;
+
+V = [velT; omega];
+disp('Wrench       Velocity')
+disp([[force;torque] V])
 
 % Jacobian of arm
 twists = calcTwists(q,w);
